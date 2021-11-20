@@ -38,7 +38,7 @@ So you know that on a specific place, that you can expect to reach someone, but 
 The number of user or the presence of life is also no more criteria to be in top of the list.
 Some people in a domain is definitely not an indicator that there is a party that you can join.
 
-###There is 2 places list...
+### There are 2 places list...
 Because there was different needs, 2 list formats are available.
 
 #### "Explore & Events" (that you get at the opening of the application)
@@ -73,11 +73,11 @@ You can also filter by maturity level.
 This version is 100% js/html5/css.
 There are no more any dependency on 3rd party libraries. Basically it's 3 file with a bunch of icons/picture.
 
-##WHY ALL THIS:
+## WHY ALL THIS:
 From all this, the next step is to develop a way to help people to know where exactly they will be truly welcomed, 
 and where are the ongoing events. All this has been put in place to start the exploration of these objectives.
 There is no objective here to replace the current "Explore" application unless the future developpement of this makes it a more useful tool. 
 In the worst case it could end as an alternative UI available in the "More+" app. repository.
 
-##Script to run in Vircadia:
+## Script to run in Vircadia:
 https://aleziakurdis.github.io/places/places.js
