@@ -10,8 +10,8 @@ This specific version of the "Places" application will be the start point to exp
 
 ### Complete retirement of the "beacon" solution... 
 The "Places" application is 100% driven by the Metaverse Server's Place API.
-The beacon solution having too much flaws. It makes sense to just get rid of it. 
-_(Thank you "Decentralized Goto", you have been very useful at a critical moment. We will never forget. R.I.P.)_
+The beacon solution having too much flaws, it has been decommissionned in this design. 
+_(It has been very useful for in early time. Thank you)_
 
 ### Place API data extraction...
 The extraction of the Place API data is done from the .js side, rather than the UI layer (.html).
