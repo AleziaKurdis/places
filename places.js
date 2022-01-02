@@ -270,7 +270,7 @@
                 accessStatus = "NOBODY";
             }                 
             
-            var shortenName = places[i]["Domain Name"].substr(0, 32);
+            var shortenName = places[i]["Domain Name"].substr(0, 24);
             
 
             var portal = {
