@@ -154,7 +154,23 @@
         tablet.emitScriptEvent(message);
         
     };
-    
+
+    function getPlacesContent(url) {
+        placesHttpRequest = new XMLHttpRequest();
+        placesHttpRequest.open("GET", url, false); // false for synchronous request
+        placesHttpRequest.send( null );
+        if (placesHttpRequest.status === 200) {
+            placesData = placesHttpRequest.responseText;
+            try {
+                placesData = JSON.parse(placesHttpRequest.responseText);
+            } catch(e) {
+                placesData = {};
+            }
+        }
+        placesHttpRequest = null; 
+        processData();
+    }
+    /*
     function getPlacesContent(apiUrl) {
         placesHttpRequest = new XMLHttpRequest();
         placesHttpRequest.requestComplete.connect(placesGetResponseStatus);
@@ -178,7 +194,7 @@
         processData();
 
     }
-    
+    */
     function processData(){
         var supportedProtocole = Window.protocolSignature();
    
