@@ -147,6 +147,9 @@
             processData();
         }
 
+        //################### TO REMOVED ONCE NO MORE USED #####################
+        getDeprecatedBeaconsData();
+        //################### END: TO REMOVED ONCE NO MORE USED #####################
         
         addUtilityPortals();
         
@@ -176,31 +179,7 @@
         placesHttpRequest.send( null );
         return placesHttpRequest.responseText;
     }
-    /*
-    function getPlacesContent(apiUrl) {
-        placesHttpRequest = new XMLHttpRequest();
-        placesHttpRequest.requestComplete.connect(placesGetResponseStatus);
-        placesHttpRequest.open("GET", apiUrl);
-        placesHttpRequest.send();
-    }
 
-    function placesGetResponseStatus() {
-        if (placesHttpRequest.status === 200) {
-            placesData = placesHttpRequest.responseText;
-            try {
-                placesData = JSON.parse(placesHttpRequest.responseText);
-            } catch(e) {
-                placesData = {};
-            }
-        }
-        
-        placesHttpRequest.requestComplete.disconnect(placesGetResponseStatus);
-        placesHttpRequest = null;
-        
-        processData();
-
-    }
-    */
     function processData(){
         var supportedProtocole = Window.protocolSignature();
    
@@ -220,8 +199,6 @@
                     } else {
                         category = "A"; //Attraction                        
                     }
-                    
-                    eventTypeDescription = places[i].eventTypeDescription;
                     
                     if (places[i].domain.num_users > 0) {
                         if (places[i].domain.num_users >= places[i].domain.capacity && places[i].domain.capacity !== 0) {
@@ -261,6 +238,60 @@
         nbrPlaceProtocolKnown = nbrPlaceProtocolKnown + places.length;
     
     }
+
+    //################### CODE TO REMOVED ONCE NO MORE USED #####################
+    function getDeprecatedBeaconsData() {
+        var url = "https://metaverse.vircadia.com/interim/d-goto/app/goto.json";
+        placesHttpRequest = new XMLHttpRequest();
+        placesHttpRequest.open("GET", url, false); // false for synchronous request
+        placesHttpRequest.send( null );
+        var extractedData = placesHttpRequest.responseText;
+        
+        placesHttpRequest = null;
+        
+        var places;
+        try {
+            places = JSON.parse(extractedData);
+        } catch(e) {
+            places = {};
+        }
+
+        for (var i = 0;i < places.length; i++) {
+
+            var category, accessStatus, eventTypeDescription;
+            
+            var description = "...";
+            var thumbnail = "";
+            category = "U"; //uncertain
+
+            if (places[i].People > 0) {
+                accessStatus = "LIFE";
+            } else {
+                accessStatus = "NOBODY";
+            }                 
+
+            var portal = {
+                "order": category + "_" + getSeededRandomForString(places[i]["Domain Name"]),
+                "category": category,
+                "accessStatus": accessStatus,
+                "name": places[i]["Domain Name"],
+                "description": description,
+                "thumbnail": thumbnail,
+                "maturity": "unrated",
+                "address": places[i].Visit,
+                "current_attendance": places[i].People,
+                "id": "",
+                "visibility": "open",
+                "capacity": 0,
+                "tags": "",
+                "managers": places[i].Owner,
+                "domain": "%BEACON%",
+                "domainOrder": "ZZZZZZZZZZZZZUA"
+            };
+            portalList.push(portal);
+        }
+    }
+    //################### END::: CODE TO REMOVED ONCE NO MORE USED #####################
 
     function addUtilityPortals() {
         var localHostPortal = {
