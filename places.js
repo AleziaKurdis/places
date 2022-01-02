@@ -13,7 +13,11 @@
 (function() {
     var jsMainFileName = "places.js";
     var ROOT = Script.resolvePath('').split(jsMainFileName)[0];
-    var METAVERSE_PLACE_API_URL = "https://metaverse.vircadia.com/live/api/v1/places";
+    
+    var dataSources = [
+            "https://metaverse.vircadia.com/live/api/v1/places",
+            "https://metaverse.vircadia.com/live/api/v1/places"
+        ];
     
     var placesHttpRequest = null;
     var placesData;
@@ -132,16 +136,17 @@
         nbrPlaceProtocolKnown = 0;
         var extractedData;
         
-        //loop
-        extractedData = getPlacesContent(METAVERSE_PLACE_API_URL + "?status=online" + "&acash=" + Math.floor(Math.random() * 999999));
-        try {
-            placesData = JSON.parse(extractedData);
-        } catch(e) {
-            placesData = {};
-        }        
-        placesHttpRequest = null; 
-        processData();
-        //end loop
+        for (var i = 0; i < dataSources.length; i++ ) {
+            extractedData = getPlacesContent(dataSources[i] + "?status=online" + "&acash=" + Math.floor(Math.random() * 999999));
+            try {
+                placesData = JSON.parse(extractedData);
+            } catch(e) {
+                placesData = {};
+            }        
+            placesHttpRequest = null; 
+            processData();
+        }
+
         
         addUtilityPortals();
         
