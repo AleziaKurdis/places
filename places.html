@@ -564,7 +564,7 @@
                 document.getElementById("placeDetail-managers").innerHTML = "By <br>&nbsp;&nbsp;&nbsp;&nbsp;" + placeDetail.managers;
                 document.getElementById("placeDetail-description").innerHTML = placeDetail.description;
                 
-                var placeUrl = placeRecords[i].name;
+                var placeUrl = "hifi://" + placeRecords[i].name;
                 if (placeRecords[i].category === "U") {  //TO REMOVE ONCE BEACONS GET REMOVED
                     placeUrl = placeRecords[i].address;
                 }
