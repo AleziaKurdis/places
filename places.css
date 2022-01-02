@@ -2,8 +2,8 @@
 //
 //  places.css
 //
-//  Created by Alezia Kurdis, November 14th, 2021.
-//  Copyright 2021, Vircadia contributors.
+//  Created by Alezia Kurdis, January 1st, 2022.
+//  Copyright 2022, ???? contributors.
 //
 //  css for the ui of the Places application.
 //
@@ -13,7 +13,7 @@
 */
 
 body {
-    font-family: Roboto, sans-serif;
+    font-family: Roboto;
     margin: 0px;
     padding: 0px;
     width: 100%;
@@ -162,9 +162,8 @@ body {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: rgb(0,0,0);
   background-color: rgba(0,0,0, 1);
-  overflow-x: hidden;
+  overflow: hidden;
   transition: 0.5s;
 }
 
@@ -206,6 +205,98 @@ body {
   top: 15px;
   right: 35px;
   }
+}
+
+.inviteForm {
+    background-color: #3e3e57;
+    color: #ffffff;
+}
+
+td.invite {
+    padding-top: 60px;
+    padding-right: 60px;
+    padding-bottom: 10px;
+    padding-left: 60px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+td.rightInvite {
+    padding-top: 0px;
+    padding-right: 60px;
+    padding-bottom: 0px;
+    padding-left: 60px;
+    text-align: right;
+}
+#eventDescTextBox {
+    width: 100%;
+    font-weight: 600;
+    font-size: 14px;    
+}
+
+#eventErrorMessage {
+    width: 100%;
+    color: #ffff00;
+    font-weight: 500;
+    font-size: 14px;     
+}
+
+.makeInviteBtn {
+    width: 100%;
+    border: 3px solid rgba(0,0,0,0);
+    border-radius: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 3px 22px 3px 22px;
+    text-decoration: none;
+    margin: 3px;
+}
+
+.makeInviteBtn:hover {
+    background-color: #ffffff;
+    color: #000000;
+    border: 3px solid #000000;
+    text-decoration: none;
+}
+
+#cancelInvite {
+    background: #405270;
+    background-image: linear-gradient(to bottom, #405270, #0d1117);
+    border: 0px;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 16px;
+    padding: 3px 22px 3px 22px;
+    text-decoration: none;
+}
+
+#cancelInvite:hover {
+    background: #5d779e;
+    background-image: linear-gradient(to bottom, #5d779e, #0d1117);
+    text-decoration: none;
+}
+
+.removeInviteBtn {
+    background: #b00000;
+    background-image: linear-gradient(to bottom, #b00000, #110000);
+    border-radius: 8px;
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 12px;
+    padding: 3px 6px 3px 6px;
+    border: solid #1f628d 0px;
+    text-decoration: none;
+    margin-top: 3px;
+}
+
+.removeInviteBtn:hover {
+    background: #c24646;
+    background-image: linear-gradient(to bottom, #c24646, #110000);
+    text-decoration: none;
+    margin-top: 3px;
 }
 
 #presenceOfLifeLabel {
@@ -274,6 +365,10 @@ body {
   text-align: center;  
 }
 
+button.adultFilterOn:hover {
+    border: solid #ffffff 1px;
+}
+
 .lifeFilterOn {
   background: #1aa616;
   color: #00FF00;
@@ -281,6 +376,10 @@ body {
   padding: 1px 2px 1px 2px;
   border: solid #000000 1px;
   text-decoration: none;  
+}
+
+button.lifeFilterOn:hover {
+    border: solid #00FF00 1px;
 }
 
 .matureFilterOn {
@@ -294,6 +393,10 @@ body {
   text-align: center;
 }
 
+button.matureFilterOn:hover {
+    border: solid #ffffff 1px;
+}
+
 .teenFilterOn {
   background: #d6c313;
   color: #ffffff;
@@ -303,6 +406,10 @@ body {
   text-decoration: none;
   width: 14px;
   text-align: center;  
+}
+
+button.teenFilterOn:hover {
+    border: solid #ffffff 1px;
 }
 
 .everyoneFilterOn {
@@ -316,6 +423,10 @@ body {
   text-align: center;  
 }
 
+button.everyoneFilterOn:hover {
+    border: solid #ffffff 1px;
+}
+
 .unratedFilterOn {
   background: #b5b5b5;
   color: #ffffff;
@@ -325,6 +436,10 @@ body {
   text-decoration: none;
   width: 14px;
   text-align: center;
+}
+
+button.unratedFilterOn:hover {
+    border: solid #ffffff 1px;
 }
 
 .filterOff {
@@ -338,6 +453,10 @@ body {
   text-align: center;  
 }
 
+button.filterOff:hover {
+    border: solid #888888 1px;
+}
+
 .filterLifeOff {
   background: #333333;
   color: #888888;
@@ -345,6 +464,10 @@ body {
   padding: 1px 2px 1px 2px;
   border: solid #000000 1px;
   text-decoration: none;
+}
+
+button.filterLifeOff:hover {
+    border: solid #888888 1px;
 }
 
 .placeMaturity {
@@ -362,6 +485,66 @@ div.placeEntry {
     box-shadow: 3px 3px 5px rgba(0,0,0,0.8);
     margin: 6px 0px 9px 6px;
     text-align: center;
+}
+
+div.placeEntryHighlighter {
+    width: 85%;
+    height: 80px;
+    font-size: 14px;
+    font-weight: 700;
+    border: 0px;
+    border-radius: 6px;
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.8);
+    margin: 6px 0px 9px 6px;
+    padding-top: 6px;
+    text-align: center;
+}
+
+.OPEN {
+    background: #00b7ff;
+    color: #ffffff;
+}
+
+.MEET {
+    background: #ffaa00;
+    color: #000000;    
+}
+
+.GAME {
+    background: #00e32d;
+    color: #000000;    
+}
+
+.SHOW {
+    background: #8000ff;
+    color: #ffffff;    
+}
+
+.CLUB {
+    background: #e32d00;
+    color: #ffffff;    
+}
+
+.LEAR {
+    background: #eeff00;
+    color: #000000;
+}
+
+div.placeEntryHighlighted {
+    width: 100%;
+    height: 60px;
+    background: #292929;
+    border: 0px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+div.placeDetail-event {
+    width: 100%;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700px;       
+    padding: 0px;    
 }
 
 #listInfo {
@@ -581,3 +764,66 @@ font.domain-nbrUser_small {
     width: 100%;   
 }
 
+.fieldsSearchFilterOn {
+  background: #0085b5;
+  color: #00bbff;
+  font-size: 10px;
+  padding: 1px 2px 1px 2px;
+  border: solid #000000 1px;
+  text-decoration: none;
+  text-align: center;  
+}
+
+button.fieldsSearchFilterOn:hover {
+    border: solid #00bbff 1px;
+}
+
+.fieldsSearchFilterOff {
+  background: #333333;
+  color: #888888;
+  font-size: 10px;
+  padding: 1px 2px 1px 2px;
+  border: solid #000000 1px;
+  text-decoration: none;
+  text-align: center;  
+}
+
+button.fieldsSearchFilterOff:hover {
+    border: solid #888888 1px;
+}
+
+::-webkit-scrollbar {
+    width: 16px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background-color: #2e2e2e;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #696969;
+    border: 2px solid #2e2e2e;
+    border-radius: 8px;
+}
+
+div.warningEntry {
+    width: 100%;
+    height: 30px;
+    background: rgba(255,128,0,0.2);
+    border: 0px;
+    text-align: left;
+    padding-bottom: 4px;
+}
+
+.warningTable {
+   width: 79%;
+   vertical-align: top; 
+}
+
+td.warningTitle {
+    font-size: 12px;
+    font-weight: 500;
+    font-style: none;
+    color: #ffa200;
+    text-align: left;
+}

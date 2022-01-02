@@ -2,10 +2,10 @@
 //
 //  places.js
 //
-//  Created by Alezia Kurdis, November 14th, 2021.
-//  Copyright 2021 Vircadia contributors.
+//  Created by Alezia Kurdis, January 1st, 2022.
+//  Copyright 2022, ??? contributors.
 //
-//  Generate an explore app based on the places api.
+//  Generate an explore app based on the differents source of placename data.
 //
 //  Distributed under the Apache License, Version 2.0.
 //  See the accompanying file LICENSE or http://www.apache.org/licenses/LICENSE-2.0.html
@@ -18,13 +18,14 @@
     var placesHttpRequest = null;
     var placesData;
     var portalList = [];
+    var percentProtocolRejected = 0;
     
     var APP_NAME = "PLACES";
     var APP_URL = ROOT + "places.html";
     var APP_ICON_INACTIVE = ROOT + "icons/appicon_i.png";
     var APP_ICON_ACTIVE = ROOT + "icons/appicon_a.png";
     var appStatus = false;
-    var channel = "com.vircadia.places";    
+    var channel = "com.vircadia.places"; //ADJUST ###########################################################################    
 
     var tablet = Tablet.getTablet("com.highfidelity.interface.tablet.system");
 
@@ -150,10 +151,16 @@
         
         processData();
         
-         var message = {
+        var warning = "";
+        if (percentProtocolRejected > 50) {
+            warning = "WARNING: " + percentProtocolRejected + "% of the places are not listed because they are running under a different protocol. Maybe consider to upgrade.";
+        }
+
+        var message = {
             "channel": channel,
             "action": "PLACE_DATA",
-            "data": portalList
+            "data": portalList,
+            "warning": warning
         };
 
         tablet.emitScriptEvent(message);
@@ -161,11 +168,12 @@
     
     function processData(){
         var supportedProtocole = Window.protocolSignature();
-            
+        percentProtocolRejected = 0;
+        var nbrPlacesNoProtocolMatch = 0;    
         var places = placesData.data.places;
         for (var i = 0;i < places.length; i++) {
 
-            var category, eventType, accessStatus, eventTypeDescription;
+            var category, accessStatus, eventTypeDescription;
             
             var description = (places[i].description ? places[i].description : "");
             var thumbnail = (places[i].thumbnail ? places[i].thumbnail : "");
@@ -174,14 +182,13 @@
                   
 
                     if ( thumbnail.substr(0, 4).toLocaleLowerCase() !== "http") {
-                        category = "Z"; //Other
+                        category = "O"; //Other
                     } else {
                         category = "A"; //Attraction                        
                     }
-
-                    eventType = "Z"; // (E = EVENT | I = INVITATION | Z = NO EVENT)
-                    eventTypeDescription = ""; //(Event Description for eventType E)
-
+                    
+                    eventTypeDescription = places[i].eventTypeDescription;
+                    
                     if (places[i].domain.num_users > 0) {
                         if (places[i].domain.num_users >= places[i].domain.capacity && places[i].domain.capacity !== 0) {
                             accessStatus = "FULL";
@@ -193,9 +200,7 @@
                     }                 
 
                     var portal = {
-                        "order": eventType + "_" + category + "_" + getSeededRandomForString(places[i].id),
-                        "eventType": eventType,
-                        "eventTypeDescription": eventTypeDescription,
+                        "order": eventSeq + "_" + category + "_" + getSeededRandomForString(places[i].id),
                         "category": category,
                         "accessStatus": accessStatus,
                         "name": places[i].name,
@@ -207,14 +212,59 @@
                         "id": places[i].id,
                         "visibility": places[i].visibility,
                         "capacity": places[i].domain.capacity,
+                        "tags": getListFromArray(places[i].tags),
                         "managers": getListFromArray(places[i].managers),
                         "domain": places[i].domain.name,
                         "domainOrder": aplphabetize(zeroPad(places[i].domain.num_users, 6)) + "_" + places[i].domain.name + "_" + places[i].name
                     };
                     portalList.push(portal);
 
+            } else {
+                nbrPlacesNoProtocolMatch++;
             }
         }
+        
+        percentProtocolRejected = Math.floor((nbrPlacesNoProtocolMatch/places.length) * 100);
+        
+        var localHostPortal = {
+            "order": "Z_Z_AAAAAA",
+            "category": "Z",
+            "accessStatus": "NOBODY",
+            "name": "localhost",
+            "description": "",
+            "thumbnail": "",
+            "maturity": "unrated",
+            "address": "localhost",
+            "current_attendance": 0,
+            "id": "",
+            "visibility": "open",
+            "capacity": 0,
+            "tags": "",
+            "managers": "",
+            "domain": "",
+            "domainOrder": "ZZZZZZZZZZZZZZA"
+        };
+        portalList.push(localHostPortal);
+
+        var tutorialPortal = {
+            "order": "Z_Z_AAAAAZ",
+            "category": "Z",
+            "accessStatus": "NOBODY",
+            "name": "tutorial",
+            "description": "",
+            "thumbnail": "",
+            "maturity": "unrated",
+            "address": "file:///~/serverless/tutorial.json",
+            "current_attendance": 0,
+            "id": "",
+            "visibility": "open",
+            "capacity": 0,
+            "tags": "",
+            "managers": "",
+            "domain": "",
+            "domainOrder": "ZZZZZZZZZZZZZZZ"
+        };
+        portalList.push(tutorialPortal);
         
         portalList.sort(sortOrder);
     }

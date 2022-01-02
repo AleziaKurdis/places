@@ -3,8 +3,8 @@
 //
 //  places.html
 //
-//  Created by Alezia Kurdis, November 14th, 2021.
-//  Copyright 2021, Vircadia contributors.
+//  Created by Alezia Kurdis, January 1st, 2022.
+//  Copyright 2022, ??? contributors.
 //
 //  html for the ui of the Places application.
 //
@@ -17,18 +17,21 @@
         <meta charset="utf-8">
         <title>Places</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="fonts.css">
         <link rel="stylesheet" href="places.css">
         <script>
             var thisPageName = "places.html";        
             var currentPath = window.location.protocol + "//" + window.location.host + window.location.pathname;
             var ROOTPATH = currentPath.replace(thisPageName, "");
-            var channel = "com.vircadia.places";
+            var channel = "com.vircadia.places";  //ADJUST ###########################################################################
             
             var placeList = [];
             var currentLocation = "";
+            var warning = "";
 
             var lifeOnlyFilter = false;
-            var maturityFiler = ["adult", "mature", "teen", "everyone", "unrated"];
+            var maturityFilter = ["adult", "mature", "teen", "everyone", "unrated"];
+            var seachedFieldsFilter = ["name", "description", "owners", "tags"];
             
             var NUMBER_OF_RECORDS_PER_LOAD = 20;
             var loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
@@ -66,7 +69,14 @@
                 </tr>
             </table>
             <div id='filters'>
-                <button class='filterLifeOff' id='presenceOfLife' onClick = 'filterLifeOnly();'>LIFE ONLY</button>
+                <div id="searchFiltersBar">
+                <button title="Name" class='fieldsSearchFilterOn' id='searchFilterName' onClick = 'filterSearchFeild("name");'>NAME</button>
+                <button title="Description" class='fieldsSearchFilterOn' id='searchFilterDesc' onClick = 'filterSearchFeild("description");'>DESC</button>
+                <button title="Owners" class='fieldsSearchFilterOn' id='searchFilterOwners' onClick = 'filterSearchFeild("owners");'>OWNERS</button>
+                <button title="Tags" class='fieldsSearchFilterOn' id='searchFilterTags' onClick = 'filterSearchFeild("tags");'>TAGS</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <button class='filterLifeOff' id='presenceOfLife' onClick = 'filterLifeOnly();'>ONLINE USERS</button>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <button title="Adult" class='adultFilterOn' id='maturityAdult' onClick = 'filterMaturity("adult");'>A</button>
                 <button title="Mature" class='matureFilterOn' id='maturityMature' onClick = 'filterMaturity("mature");'>M</button>
@@ -75,7 +85,7 @@
                 <button title="Unrated" class='unratedFilterOn' id='maturityUnrated' onClick = 'filterMaturity("unrated");'>U</button>
             </div>
             <div id='tabs'>
-                <button id='listFormatEvents' class='tabBtn' onclick='displayTab("EVENTS");' disabled>Explore & Events</button>
+                <button id='listFormatEvents' class='tabBtn' onclick='displayTab("EVENTS");' disabled>Explore</button>
                 <button id='listFormatDomains' class='tabBtn' onclick='displayTab("DOMAINS");'>By Domains</button>
             </div>
         </div>
@@ -83,9 +93,9 @@
         <div id='listInfo'></div>
         <input type = 'text' readonly id='currentLocation'>
         <div id="placeDetail" class="overlay">
-          <a href="javascript:void(0)" class="closebtn" onclick="closeDetail();">&#129080;</a>
+          <a href="javascript:void(0)" class="closebtn" onclick="closeDetail();">&times;</a>
           <div class="overlay-content">
-                <img id="placeDetail-image" onclick="closeDetail();">
+                <img id="placeDetail-image" onclick="closeDetail();" draggable="false">
                 <div id="placeDetail-placeName"></div>
                 <table width='100%'>
                     <tr valign='top'>
@@ -104,20 +114,21 @@
                                 <div id="placeDetail-users"></div>
                                 <br><br>
                                 <div id="placeDetail-capacity"></div>
+                                <br><br>
                             </div>
                         </td>
                     </tr>
                 </table>
           </div>
         </div>
-        
-        
+
         <script>
             //LISTENER FROM JS FILE:
             EventBridge.scriptEventReceived.connect(function (message) {
                 if (message.channel === channel && message.action === "PLACE_DATA") {
                     placeList = [];
                     placeList = message.data;
+                    warning = message.warning;
                     generateContent();
                 }
                 if (message.channel === channel && message.action === "CURRENT_LOCATION") {
@@ -132,6 +143,17 @@
                 };
                 
             EventBridge.emitWebEvent(JSON.stringify(goSignal));
+            
+            function reload() {
+                var goSignal = {
+                    "channel": channel,
+                    "action": "READY_FOR_CONTENT"
+                    };
+                    
+                EventBridge.emitWebEvent(JSON.stringify(goSignal));
+                closeDetail();
+            }
+            
 
             function displayCurrentLocation() {
                 loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
@@ -156,7 +178,7 @@
 
             function generateContent() {
                 var placeRecords = placeList.slice();
-                
+
                 if (currentListFormat === "DOMAINS") {
                     placeRecords.sort(sortDomainsOrder);
                 }
@@ -164,6 +186,18 @@
                 var currentDomain = "";
                 var counter = 0;
                 var formatedList = "";
+                
+                if (warning !== "") {
+                    formatedList = formatedList + "<div class='warningEntry'>";
+                    formatedList = formatedList + "<table class='warningTable'>";
+                    formatedList = formatedList + "<tr>";
+                    formatedList = formatedList + "<td width='5%'>&nbsp;</td>";
+                    formatedList = formatedList + "<td width='95%' valign='top' class='warningTitle'>" + warning + "</td>";
+                    formatedList = formatedList + "</tr>";
+                    formatedList = formatedList + "</table>";
+                    formatedList = formatedList + "</div>";                    
+                }
+                                
                 for (var i = 0; i < placeRecords.length; i++) {
                     if (counter === loadRecordsUpTo) {
                         //Display Load More button
@@ -179,19 +213,12 @@
                         placeRecords[i].order
                             //String (Just a sequence used to establish the current ordering. 
                             //No expected to be use, the list is already sorted based on it for you when the page get the data.)
-                            
-                        placeRecords[i].eventType
-                            //STRING (Possible values: "E" = EVENT | "I" = INVITATION | "Z" = NO EVENT(default))
-                            //required to figure if the place has been promoted in top of the list. This is to know what kind of event it is.
-                            //The ordering is already sorting the event in top of the list.
-                            
-                        placeRecords[i].eventTypeDescription
-                            //STRING. This is the event description to display for the Events of type E
-                            
+                        
                         placeRecords[i].category
                             //STRING (Possible Values: 
                                 //"A" = Attraction (places that have a thumbnail to attact trafic)
                                 //"Z" = Other (places that have no tumbnail to not attract trafic, since it's not an attraction.)
+                                //"Z" = Utilitary things like localhost
                                 //The ordering is already sorting the event in top of the list.
                                 //You could also have checked if the thumbnail exist or not.
                                 
@@ -231,6 +258,9 @@
                             
                         placeRecords[i].capacity
                             Number (Would be the max number of user allowed in the targetted domain.)
+
+                        placeRecords[i].tags
+                            String: Preformated list of tags
                             
                         placeRecords[i].managers
                             String: Preformated list of owners
@@ -244,10 +274,23 @@
                     
                     */
                     var searchedText = document.getElementById("search").value;
+                    if (searchedText !== "") {
+                        displaySearchFieldsFilter();
+                        document.getElementById("searchFiltersBar").style.display = "inline-block";
+                    } else {
+                        document.getElementById("searchFiltersBar").style.display = "none";
+                    }
+                    
                     var lowerCasePlaceName = placeRecords[i].name.toLowerCase();
+                    var lowerCasePlaceDescription = placeRecords[i].description.toLowerCase();
+                    var lowerCasePlaceManagers = placeRecords[i].managers.toLowerCase();
+                    var lowerCasePlaceTags = placeRecords[i].tags.toLowerCase();
                     if ((lifeOnlyFilter && placeRecords[i].accessStatus !== "NOBODY") || !lifeOnlyFilter) { 
-                        if ( maturityFiler.indexOf(placeRecords[i].maturity) !== -1){
-                            if (lowerCasePlaceName.indexOf(searchedText.toLowerCase()) !== -1) { 
+                        if ( maturityFilter.indexOf(placeRecords[i].maturity) !== -1){
+                            if ((lowerCasePlaceName.indexOf(searchedText.toLowerCase()) !== -1 && seachedFieldsFilter.indexOf("name") !== -1) ||
+                                (lowerCasePlaceDescription.indexOf(searchedText.toLowerCase()) !== -1 && seachedFieldsFilter.indexOf("description") !== -1) ||
+                                (lowerCasePlaceManagers.indexOf(searchedText.toLowerCase()) !== -1 && seachedFieldsFilter.indexOf("owners") !== -1) ||
+                                (lowerCasePlaceTags.indexOf(searchedText.toLowerCase()) !== -1 && seachedFieldsFilter.indexOf("tags") !== -1) ) { 
                                 
                                 if (currentListFormat === "DOMAINS" && currentDomain !== placeRecords[i].domain) {
                                     
@@ -274,6 +317,8 @@
                                 var moreStyle = "";
                                 if (placeRecords[i].category === "A") {
                                     moreStyle = " style='background-image: url(" + placeRecords[i].thumbnail + "); background-repeat: no-repeat; background-position: 50% 50%; background-size: cover;'";
+                                } else if (placeRecords[i].category === "Z") {
+                                    moreStyle = " style='background-color: #364a6e;'";
                                 }
                                 
                                 var shortenedDescription = placeRecords[i].description.substr(0, 55);
@@ -281,25 +326,29 @@
                                     shortenedDescription = shortenedDescription + "...";
                                 }
                                 
-                                //Add the place to the list     
+                                //Add the place to the list
+                                
                                 formatedList = formatedList + "<div class = 'placeEntry' id='place-" + placeRecords[i].id + "'" + moreStyle + "><div class = 'blur'>";
                                 formatedList = formatedList + "<table class='placeTable'>";
-                                formatedList = formatedList + "    <tr>";
+                                formatedList = formatedList + "    <tr valign = 'top'>";
                                 formatedList = formatedList + "        <td width='2%'></td>";                                
-                                formatedList = formatedList + "        <td align='left' width='88%' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'><a class= 'placeTitle' href='javascript:void(0)' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'>" + placeRecords[i].name + "</a></td>";
-                                formatedList = formatedList + "        <td align='right'><span style='font-size:20px;cursor:pointer' onclick='openDetail(" + '"' + placeRecords[i].id + '"' + ")'><img src='icons/info.png' width='26' height='26'></span></td>";
-                                formatedList = formatedList + "    </tr>";
-                                formatedList = formatedList + "    <tr>";
-                                formatedList = formatedList + "        <td></td>";
-                                formatedList = formatedList + "        <td align='left'class='place-entry-description' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'>" + shortenedDescription + "</td>";
-                                formatedList = formatedList + "        <td align='right' class='presenceOfLife-" + placeRecords[i].accessStatus + "'>&#9603;</td>";
+                                formatedList = formatedList + "        <td align='left' width='75%' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'><a class= 'placeTitle' href='javascript:void(0)' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'>" + placeRecords[i].name + "</a></td>";
+                                if (placeRecords[i].category !== "Z") {
+                                    formatedList = formatedList + "        <td align='right' ><span style='padding: 0%; cursor: pointer;' onclick='openDetail(" + '"' + placeRecords[i].id + '"' + ")'><img src='icons/info.png' width='26' height='26' draggable='false'></span></td>";
+                                }
                                 formatedList = formatedList + "    </tr>";
                                 formatedList = formatedList + "</table>";
-                                
+                                if (placeRecords[i].category !== "Z") {
+                                    formatedList = formatedList + "<table class='placeTable'>";
+                                    formatedList = formatedList + "    <tr>";
+                                    formatedList = formatedList + "        <td width='2%'></td>";
+                                    formatedList = formatedList + "        <td align='left' width='88%' class='place-entry-description' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'>" + shortenedDescription + "</td>";
+                                    formatedList = formatedList + "        <td align='right' class='presenceOfLife-" + placeRecords[i].accessStatus + "'>&#9603;</td>";
+                                    formatedList = formatedList + "    </tr>";
+                                    formatedList = formatedList + "</table>";
+                                }
                                 formatedList = formatedList + "</div></div>";
-                                
-                                
-                                
+
                                 counter++;
                             }
                         }
@@ -367,13 +416,24 @@
             }
             
             function filterMaturity(targeted) {
-                if (maturityFiler.indexOf(targeted) === -1) {
-                    maturityFiler.push(targeted);
+                if (maturityFilter.indexOf(targeted) === -1) {
+                    maturityFilter.push(targeted);
                 } else {
-                    maturityFiler = arrayRemove(maturityFiler, targeted);
+                    maturityFilter = arrayRemove(maturityFilter, targeted);
                 }
                 loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
                 displayMaturityFilter();
+                generateContent();            
+            }
+
+            function filterSearchFeild(targeted) {
+                if (seachedFieldsFilter.indexOf(targeted) === -1) {
+                    seachedFieldsFilter.push(targeted);
+                } else {
+                    seachedFieldsFilter = arrayRemove(seachedFieldsFilter, targeted);
+                }
+                loadRecordsUpTo = NUMBER_OF_RECORDS_PER_LOAD;
+                displaySearchFieldsFilter();
                 generateContent();            
             }
             
@@ -384,35 +444,62 @@
             }
 
             function displayMaturityFilter() {
-                if (maturityFiler.indexOf("adult") === -1) {
+                if (maturityFilter.indexOf("adult") === -1) {
                     document.getElementById("maturityAdult").className = "filterOff";
                 } else {
                     document.getElementById("maturityAdult").className = "adultFilterOn";
                 }
 
-                if (maturityFiler.indexOf("mature") === -1) {
+                if (maturityFilter.indexOf("mature") === -1) {
                     document.getElementById("maturityMature").className = "filterOff";
                 } else {
                     document.getElementById("maturityMature").className = "matureFilterOn";
                 } 
                 
-                if (maturityFiler.indexOf("teen") === -1) {
+                if (maturityFilter.indexOf("teen") === -1) {
                     document.getElementById("maturityTeen").className = "filterOff";
                 } else {
                     document.getElementById("maturityTeen").className = "teenFilterOn";
                 }
 
-                if (maturityFiler.indexOf("everyone") === -1) {
+                if (maturityFilter.indexOf("everyone") === -1) {
                     document.getElementById("maturityEveryone").className = "filterOff";
                 } else {
                     document.getElementById("maturityEveryone").className = "everyoneFilterOn";
                 }                
 
-                if (maturityFiler.indexOf("unrated") === -1) {
+                if (maturityFilter.indexOf("unrated") === -1) {
                     document.getElementById("maturityUnrated").className = "filterOff";
                 } else {
                     document.getElementById("maturityUnrated").className = "unratedFilterOn";
                 }                
+            }
+
+            function displaySearchFieldsFilter() {
+                if (seachedFieldsFilter.indexOf("name") === -1) {
+                    document.getElementById("searchFilterName").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterName").className = "fieldsSearchFilterOn";
+                }
+
+                if (seachedFieldsFilter.indexOf("description") === -1) {
+                    document.getElementById("searchFilterDesc").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterDesc").className = "fieldsSearchFilterOn";
+                }
+                
+                if (seachedFieldsFilter.indexOf("owners") === -1) {
+                    document.getElementById("searchFilterOwners").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterOwners").className = "fieldsSearchFilterOn";
+                }
+                
+                if (seachedFieldsFilter.indexOf("tags") === -1) {
+                    document.getElementById("searchFilterTags").className = "fieldsSearchFilterOff";
+                } else {
+                    document.getElementById("searchFilterTags").className = "fieldsSearchFilterOn";
+                }
+
             }
             
             function filterSearch() {
@@ -430,7 +517,7 @@
                     }
                 teleport("", finalizedUrl);
             }
-            
+
             function clearSearch() {
                 document.getElementById("search").value = "";
                 document.getElementById("clearBtn").style.display = "none";
@@ -452,6 +539,7 @@
                 generateContent();
             }
             
+
             function openDetail(placeId) {
                 for (var k=0; k < placeList.length; k++) {
                     if (placeList[k].id === placeId) {
@@ -478,6 +566,7 @@
                     capacity = placeDetail.capacity;
                 }
                 document.getElementById("placeDetail-capacity").innerHTML = "CAPACITY: <b>" + capacity + "</b>";
+  
                 document.getElementById("placeDetail").style.width = "100%";
             }
 
@@ -485,8 +574,14 @@
                 document.getElementById("placeDetail").style.width = "0%";
             }
 
+            function sleepFor( milliseconds ){
+                var now = new Date().getTime();
+                while(new Date().getTime() < now + milliseconds){ /* do nothing */ } 
+            }                      
+
             displayMaturityFilter();
             document.getElementById("clearBtn").style.display = "none";
+            document.getElementById("searchFiltersBar").style.display = "none";
         </script>            
     </body>
 </html>
