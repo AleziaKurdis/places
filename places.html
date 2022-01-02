@@ -328,7 +328,7 @@
                                     shortenedDescription = shortenedDescription + "...";
                                 }
                                 
-                                var placeUrl = placeRecords[i].name;
+                                var placeUrl = "hifi://" + placeRecords[i].name;
                                 if (placeRecords[i].category === "U") {  //TO REMOVE ONCE BEACONS GET REMOVED
                                     placeUrl = placeRecords[i].address;
                                 }
