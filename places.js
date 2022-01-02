@@ -18,7 +18,9 @@
     var placesHttpRequest = null;
     var placesData;
     var portalList = [];
-    var percentProtocolRejected = 0;
+
+    var nbrPlacesNoProtocolMatch = 0;
+    var nbrPlaceProtocolKnown = 0;
     
     var APP_NAME = "PLACES";
     var APP_URL = ROOT + "places.html";
@@ -126,7 +128,31 @@
 
     function transmitPortalList() {
         portalList = [];
+        nbrPlacesNoProtocolMatch = 0;
+        nbrPlaceProtocolKnown = 0;
+        
         getPlacesContent(METAVERSE_PLACE_API_URL + "?status=online" + "&acash=" + Math.floor(Math.random() * 999999));
+        
+        addUtilityPortals();
+        
+        portalList.sort(sortOrder);
+        
+        var percentProtocolRejected = Math.floor((nbrPlacesNoProtocolMatch/nbrPlaceProtocolKnown) * 100);
+        
+        var warning = "";
+        if (percentProtocolRejected > 50) {
+            warning = "WARNING: " + percentProtocolRejected + "% of the places are not listed because they are running under a different protocol. Maybe consider to upgrade.";
+        }
+
+        var message = {
+            "channel": channel,
+            "action": "PLACE_DATA",
+            "data": portalList,
+            "warning": warning
+        };
+
+        tablet.emitScriptEvent(message);
+        
     };
     
     function getPlacesContent(apiUrl) {
@@ -150,26 +176,12 @@
         placesHttpRequest = null;
         
         processData();
-        
-        var warning = "";
-        if (percentProtocolRejected > 50) {
-            warning = "WARNING: " + percentProtocolRejected + "% of the places are not listed because they are running under a different protocol. Maybe consider to upgrade.";
-        }
 
-        var message = {
-            "channel": channel,
-            "action": "PLACE_DATA",
-            "data": portalList,
-            "warning": warning
-        };
-
-        tablet.emitScriptEvent(message);
     }
     
     function processData(){
         var supportedProtocole = Window.protocolSignature();
-        percentProtocolRejected = 0;
-        var nbrPlacesNoProtocolMatch = 0;    
+   
         var places = placesData.data.places;
         for (var i = 0;i < places.length; i++) {
 
@@ -224,8 +236,11 @@
             }
         }
         
-        percentProtocolRejected = Math.floor((nbrPlacesNoProtocolMatch/places.length) * 100);
-        
+        nbrPlaceProtocolKnown = nbrPlaceProtocolKnown + places.length;
+    
+    }
+
+    function addUtilityPortals() {
         var localHostPortal = {
             "order": "Z_AAAAAA",
             "category": "Z",
@@ -266,7 +281,6 @@
         };
         portalList.push(tutorialPortal);
         
-        portalList.sort(sortOrder);
     }
 
     function aplphabetize(num) {
