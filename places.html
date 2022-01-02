@@ -319,6 +319,8 @@
                                     moreStyle = " style='background-image: url(" + placeRecords[i].thumbnail + "); background-repeat: no-repeat; background-position: 50% 50%; background-size: cover;'";
                                 } else if (placeRecords[i].category === "Z") {
                                     moreStyle = " style='background-color: #364a6e;'";
+                                } else if (placeRecords[i].category === "U") { //TO REMOVE ONCE BEACONS GET REMOVED
+                                    moreStyle = " style='background-color: #38130f;'";
                                 }
                                 
                                 var shortenedDescription = placeRecords[i].description.substr(0, 55);
