@@ -269,12 +269,15 @@
             } else {
                 accessStatus = "NOBODY";
             }                 
+            
+            var shortenName = places[i]["Domain Name"].substr(0, 32);
+            
 
             var portal = {
                 "order": category + "_" + getSeededRandomForString(places[i]["Domain Name"]),
                 "category": category,
                 "accessStatus": accessStatus,
-                "name": places[i]["Domain Name"],
+                "name": shortenName,
                 "description": description,
                 "thumbnail": thumbnail,
                 "maturity": "unrated",
@@ -285,7 +288,7 @@
                 "capacity": 0,
                 "tags": "",
                 "managers": places[i].Owner,
-                "domain": "%BEACON%",
+                "domain": "UNKNOWN (Beacon)",
                 "domainOrder": "ZZZZZZZZZZZZZUA"
             };
             portalList.push(portal);
