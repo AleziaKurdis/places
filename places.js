@@ -227,7 +227,7 @@
         percentProtocolRejected = Math.floor((nbrPlacesNoProtocolMatch/places.length) * 100);
         
         var localHostPortal = {
-            "order": "Z_Z_AAAAAA",
+            "order": "Z_AAAAAA",
             "category": "Z",
             "accessStatus": "NOBODY",
             "name": "localhost",
@@ -247,7 +247,7 @@
         portalList.push(localHostPortal);
 
         var tutorialPortal = {
-            "order": "Z_Z_AAAAAZ",
+            "order": "Z_AAAAAZ",
             "category": "Z",
             "accessStatus": "NOBODY",
             "name": "tutorial",
@@ -282,7 +282,7 @@
 
     function getListFromArray(dataArray) {
         var dataList = "";
-        if (dataArray.length > 0) {
+        if (dataArray !== undefined && dataArray.length > 0) {
             for (var k = 0; k < dataArray.length; k++) {
                 if (k !== 0) {
                     dataList += ", "; 
