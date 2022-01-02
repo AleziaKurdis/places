@@ -328,13 +328,18 @@
                                     shortenedDescription = shortenedDescription + "...";
                                 }
                                 
+                                var placeUrl = placeRecords[i].name;
+                                if (placeRecords[i].category === "U") {  //TO REMOVE ONCE BEACONS GET REMOVED
+                                    placeUrl = placeRecords[i].address;
+                                }
+                                
                                 //Add the place to the list
                                 
                                 formatedList = formatedList + "<div class = 'placeEntry' id='place-" + placeRecords[i].id + "'" + moreStyle + "><div class = 'blur'>";
                                 formatedList = formatedList + "<table class='placeTable'>";
                                 formatedList = formatedList + "    <tr valign = 'top'>";
                                 formatedList = formatedList + "        <td width='2%'></td>";                                
-                                formatedList = formatedList + "        <td align='left' width='75%' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'><a class= 'placeTitle' href='javascript:void(0)' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'>" + placeRecords[i].name + "</a></td>";
+                                formatedList = formatedList + "        <td align='left' width='75%' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeUrl + '"' + "); return false;'><a class= 'placeTitle' href='javascript:void(0)' onclick='teleport(" + '"' + placeRecords[i].id + '"' + ", " + '"' + placeRecords[i].address + '"' + "); return false;'>" + placeRecords[i].name + "</a></td>";
                                 if (placeRecords[i].category !== "Z") {
                                     formatedList = formatedList + "        <td align='right' ><span style='padding: 0%; cursor: pointer;' onclick='openDetail(" + '"' + placeRecords[i].id + '"' + ")'><img src='icons/info.png' width='26' height='26' draggable='false'></span></td>";
                                 }
@@ -558,7 +563,13 @@
                 document.getElementById("placeDetail-placeName").innerHTML = placeDetail.name;
                 document.getElementById("placeDetail-managers").innerHTML = "By <br>&nbsp;&nbsp;&nbsp;&nbsp;" + placeDetail.managers;
                 document.getElementById("placeDetail-description").innerHTML = placeDetail.description;
-                document.getElementById("placeDetail-visitBtn-container").innerHTML = "<button id='placeDetail-visitBtn' onclick='teleport(" + '"' + placeDetail.id + '"' + ", " + '"' + placeDetail.address + '"' + "); return false;'>Visit</button>";
+                
+                var placeUrl = placeRecords[i].name;
+                if (placeRecords[i].category === "U") {  //TO REMOVE ONCE BEACONS GET REMOVED
+                    placeUrl = placeRecords[i].address;
+                }
+                
+                document.getElementById("placeDetail-visitBtn-container").innerHTML = "<button id='placeDetail-visitBtn' onclick='teleport(" + '"' + placeDetail.id + '"' + ", " + '"' + placeUrl + '"' + "); return false;'>Visit</button>";
                 document.getElementById("placeDetail-maturity").innerHTML = placeDetail.maturity.toUpperCase();
                 document.getElementById("placeDetail-maturity").className = placeDetail.maturity + "FilterOn placeMaturity";
                 document.getElementById("placeDetail-domain").innerHTML = placeDetail.domain.toUpperCase();
