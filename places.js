@@ -46,12 +46,12 @@
     
     function clicked(){
         if (appStatus === true) {
-            tablet.webEventReceived.disconnect(onMoreAppWebEventReceived);
+            tablet.webEventReceived.disconnect(onAppWebEventReceived);
             tablet.gotoHomeScreen();
             appStatus = false;
         } else {
             tablet.gotoWebScreen(APP_URL);
-            tablet.webEventReceived.connect(onMoreAppWebEventReceived);
+            tablet.webEventReceived.connect(onAppWebEventReceived);
             appStatus = true;
         }
 
@@ -63,7 +63,7 @@
     button.clicked.connect(clicked);
 
 
-    function onMoreAppWebEventReceived(message) {
+    function onAppWebEventReceived(message) {
         var d = new Date();
         var n = d.getTime();
         
@@ -130,8 +130,18 @@
         portalList = [];
         nbrPlacesNoProtocolMatch = 0;
         nbrPlaceProtocolKnown = 0;
+        var extractedData;
         
-        getPlacesContent(METAVERSE_PLACE_API_URL + "?status=online" + "&acash=" + Math.floor(Math.random() * 999999));
+        //loop
+        extractedData = getPlacesContent(METAVERSE_PLACE_API_URL + "?status=online" + "&acash=" + Math.floor(Math.random() * 999999));
+        try {
+            placesData = JSON.parse(extractedData);
+        } catch(e) {
+            placesData = {};
+        }        
+        placesHttpRequest = null; 
+        processData();
+        //end loop
         
         addUtilityPortals();
         
@@ -159,16 +169,7 @@
         placesHttpRequest = new XMLHttpRequest();
         placesHttpRequest.open("GET", url, false); // false for synchronous request
         placesHttpRequest.send( null );
-        if (placesHttpRequest.status === 200) {
-            placesData = placesHttpRequest.responseText;
-            try {
-                placesData = JSON.parse(placesHttpRequest.responseText);
-            } catch(e) {
-                placesData = {};
-            }
-        }
-        placesHttpRequest = null; 
-        processData();
+        return placesHttpRequest.responseText;
     }
     /*
     function getPlacesContent(apiUrl) {
@@ -389,7 +390,7 @@
 
         if (appStatus) {
             tablet.gotoHomeScreen();
-            tablet.webEventReceived.disconnect(onMoreAppWebEventReceived);
+            tablet.webEventReceived.disconnect(onAppWebEventReceived);
         }
 
         tablet.screenChanged.disconnect(onScreenChanged);
