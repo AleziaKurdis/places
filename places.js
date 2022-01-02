@@ -200,7 +200,7 @@
                     }                 
 
                     var portal = {
-                        "order": eventSeq + "_" + category + "_" + getSeededRandomForString(places[i].id),
+                        "order": category + "_" + getSeededRandomForString(places[i].id),
                         "category": category,
                         "accessStatus": accessStatus,
                         "name": places[i].name,
