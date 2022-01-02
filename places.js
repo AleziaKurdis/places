@@ -15,7 +15,6 @@
     var ROOT = Script.resolvePath('').split(jsMainFileName)[0];
     
     var dataSources = [
-            "https://metaverse.vircadia.com/live/api/v1/places",
             "https://metaverse.vircadia.com/live/api/v1/places"
         ];
     
