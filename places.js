@@ -13,9 +13,10 @@
 (function() {
     var jsMainFileName = "places.js";
     var ROOT = Script.resolvePath('').split(jsMainFileName)[0];
-    
+
+    var CURRENT_METAVERSE_SERVER = AccountServices.metaverseServerURL + "/api/v1/places";
     var dataSources = [
-            "https://metaverse.vircadia.com/live/api/v1/places"
+            CURRENT_METAVERSE_SERVER
         ];
     
     var placesHttpRequest = null;
