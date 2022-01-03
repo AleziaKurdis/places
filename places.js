@@ -283,7 +283,7 @@
                 "maturity": "unrated",
                 "address": places[i].Visit,
                 "current_attendance": places[i].People,
-                "id": "",
+                "id": "BEACON" + i,
                 "visibility": "open",
                 "capacity": 0,
                 "tags": "",
